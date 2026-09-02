@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const BACKEND_HOST = import.meta.env?.VITE_BACKEND_HOST || 'localhost:8000';
+export const API_BASE_URL = `http://${BACKEND_HOST}/api/v1`;
+export const WS_LOGS_URL = `ws://${BACKEND_HOST}/ws/agent-logs`;
 
 export const api = {
   getHealth: async () => {
@@ -41,3 +43,4 @@ export const api = {
     return res.data;
   }
 };
+

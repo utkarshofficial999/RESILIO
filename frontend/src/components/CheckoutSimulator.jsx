@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CreditCard, Smartphone, CheckCircle, XCircle, ArrowRight, RefreshCw, Zap, Lock, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export default function CheckoutSimulator({ onSimulateFailure, isProcessing, recoveryResult }) {
+export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, isProcessing, recoveryResult }) {
   const [amount, setAmount] = useState(4999);
   const [selectedError, setSelectedError] = useState('BANK_TIMEOUT');
   const [selectedBank, setSelectedBank] = useState('HDFC');
@@ -28,6 +28,14 @@ export default function CheckoutSimulator({ onSimulateFailure, isProcessing, rec
       confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
     }
   };
+
+  const handle1TapUPI = () => {
+    confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+    if (onConfirmUIFlip) {
+      onConfirmUIFlip();
+    }
+  };
+
 
   return (
     <div className="glass-panel rounded-2xl p-6 border border-gray-800 flex flex-col gap-6">
@@ -183,7 +191,10 @@ export default function CheckoutSimulator({ onSimulateFailure, isProcessing, rec
                     <p className="text-xs text-gray-300">
                       Card payment faced insufficient funds. Transformed checkout into 1-Tap UPI Direct Intent.
                     </p>
-                    <button className="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-xs shadow-lg transition">
+                    <button
+                      onClick={handle1TapUPI}
+                      className="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-gray-950 font-bold text-xs shadow-lg transition cursor-pointer"
+                    >
                       1-TAP PAY VIA PHONEPE / GPAY
                     </button>
                   </div>

@@ -45,8 +45,8 @@ def optimize_recovery_node(state: ResilioState) -> Dict[str, Any]:
     node_traces.append(trace)
     
     return {
-        "selected_strategy": selected_score.dict(),
-        "counterfactual_explanation": counterfactual.dict(),
-        "scored_strategies": [s.dict() for s in scored_list],
+        "selected_strategy": selected_score.model_dump(),
+        "counterfactual_explanation": counterfactual.model_dump(),
+        "scored_strategies": [s.model_dump() for s in scored_list],
         "node_traces": node_traces
     }

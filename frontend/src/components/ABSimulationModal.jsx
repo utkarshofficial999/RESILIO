@@ -1,8 +1,25 @@
-import React from 'react';
-import { BarChart2, TrendingUp, X, CheckCircle, ShieldAlert, Award } from 'lucide-react';
+import React, { useState } from 'react';
+import { BarChart2, TrendingUp, X, CheckCircle, ShieldAlert, Award, Download, Copy, Check } from 'lucide-react';
 
 export default function ABSimulationModal({ report, onClose }) {
+  const [copied, setCopied] = useState(false);
   if (!report) return null;
+
+  const handleDownloadJSON = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(report, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `resilio_ab_benchmark_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  const handleCopyJSON = () => {
+    navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -17,12 +34,29 @@ export default function ABSimulationModal({ report, onClose }) {
               1,000 Synthetic Transaction A/B Benchmark Results
             </h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopyJSON}
+              className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold flex items-center gap-1.5 transition"
+              title="Copy JSON Report"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-400" />}
+              {copied ? 'Copied' : 'Copy JSON'}
+            </button>
+            <button
+              onClick={handleDownloadJSON}
+              className="px-3 py-1.5 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-700 text-cyan-300 text-xs font-semibold flex items-center gap-1.5 transition"
+              title="Download Benchmark JSON"
+            >
+              <Download className="w-3.5 h-3.5" /> Export JSON
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Hero Recovery Lift Banner */}
@@ -105,7 +139,7 @@ export default function ABSimulationModal({ report, onClose }) {
         <div className="text-center pt-2">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold text-xs shadow-lg transition"
+            className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold text-xs shadow-lg transition cursor-pointer"
           >
             CLOSE BENCHMARK REPORT
           </button>
@@ -114,3 +148,4 @@ export default function ABSimulationModal({ report, onClose }) {
     </div>
   );
 }
+

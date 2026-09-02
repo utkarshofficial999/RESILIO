@@ -15,7 +15,8 @@ frontend:
 
 test:
 	@echo "Running pytest test suite..."
-	$env:PYTHONPATH="backend"; python -m pytest backend/tests/
+	cd backend && python -m pytest tests/
 
 docker:
 	docker-compose up --build
+

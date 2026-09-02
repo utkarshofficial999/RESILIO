@@ -2,6 +2,7 @@ import time
 from typing import Dict, Any
 from app.agents.state import ResilioState
 from app.schemas.schemas import FailureClassification
+from app.agents.llm_client import call_groq_llm
 
 def investigate_failure_node(state: ResilioState) -> Dict[str, Any]:
     """
@@ -26,22 +27,22 @@ def investigate_failure_node(state: ResilioState) -> Dict[str, Any]:
         recoverability = "MODERATE"
         recommended = ["UI_FLIP", "ASYNC_RECOVERY"]
         reason = f"Payment failure caused by user account or instrument limit. Zero-friction rail flip recommended."
-    else:
-        category = "UNKNOWN"
-        severity = "MEDIUM"
-        recoverability = "LOW"
-        recommended = ["ASYNC_RECOVERY", "ABANDON"]
-        reason = "Unmapped error payload. Proceeding with safety policy."
+    reason = reason
+    # Optionally enrich with Groq LLM AI Diagnosis if API key is active
+    ai_prompt = f"Analyze payment failure: bank={state.get('bank_name')}, error_code={error_code}, description='{error_desc}'. In 1 concise sentence (under 25 words), diagnose the root cause for payment recovery."
+    ai_diagnosis = call_groq_llm(ai_prompt)
+    if ai_diagnosis:
+        reason = f"[Groq AI Diagnosis] {ai_diagnosis}"
         
     classification = FailureClassification(
         category=category,
         error_code=error_code,
         severity=severity,
         recoverability=recoverability,
-        confidence=0.94,
+        confidence=0.96 if ai_diagnosis else 0.94,
         recommended_strategies=recommended,
         diagnosis_reason=reason
-    ).dict()
+    ).model_dump()
 
     trace = {
         "node_name": "Failure Investigator",
