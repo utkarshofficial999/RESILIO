@@ -105,6 +105,9 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
         theme: {
           color: "#072654"
         },
+        retry: {
+          enabled: false
+        },
         modal: {
           ondismiss: function() {
             setLiveError('Payment session abandoned or closed by customer.');
