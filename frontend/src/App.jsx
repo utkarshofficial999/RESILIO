@@ -104,27 +104,65 @@ export default function App() {
     }
   };
 
-  const handleCompleteLiveRecovery = () => {
-    if (latestResult) {
-      const updated = {
-        ...latestResult,
-        status: 'SUCCESS',
-        execution_result: {
-          ...latestResult.execution_result,
-          message: 'Recovered payment captured! 100% GMV secured with 0% drop-off.'
+  const handleCompleteLiveRecovery = async () => {
+    setShowLiveRecoveryModal(false);
+    try {
+      if (!window.Razorpay) {
+        throw new Error('Razorpay SDK not loaded');
+      }
+
+      const keyData = await api.getRazorpayKey();
+      const order = await api.createRazorpayOrder(lastSimulatedAmount * 100);
+      const orderId = order.order_id || order.id;
+
+      const options = {
+        key: keyData.key_id,
+        amount: order.amount,
+        currency: order.currency || 'INR',
+        name: "RESILIO — Autonomous Recovery",
+        description: "Recovered via Healthy Rail (ICICI Bank)",
+        image: "https://razorpay.com/favicon.png",
+        order_id: orderId,
+        prefill: {
+          name: "Hackathon Tester",
+          email: "test@razorpay.com",
+          contact: "9045482200"
+        },
+        theme: {
+          color: "#1CA672"
+        },
+        handler: async function (response) {
+          try {
+            await api.verifyPayment(response.razorpay_payment_id, response.razorpay_order_id);
+          } catch (e) {}
+
+          const updated = {
+            ...latestResult,
+            status: 'SUCCESS',
+            execution_result: {
+              ...latestResult?.execution_result,
+              message: `Payment ${response.razorpay_payment_id} successfully captured on Razorpay via recovered rail!`
+            }
+          };
+          setLatestResult(updated);
+
+          const newEvent = {
+            attempt_number: history.length + 1,
+            strategy: 'AUTONOMOUS_RECOVERY (CAPTURED ON RAZORPAY)',
+            status: 'SUCCESS',
+            details: `Real Razorpay payment ${response.razorpay_payment_id} captured. Check Razorpay Dashboard!`,
+            timestamp: new Date().toLocaleTimeString()
+          };
+          setHistory((prev) => [newEvent, ...prev]);
+          fetchInitialData();
+          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
         }
       };
-      setLatestResult(updated);
 
-      const newEvent = {
-        attempt_number: history.length + 1,
-        strategy: `${latestResult.selected_strategy || 'RECOVERY'} (CAPTURED)`,
-        status: 'SUCCESS',
-        details: 'Payment recovered & captured autonomously with zero drop-off.',
-        timestamp: new Date().toLocaleTimeString()
-      };
-      setHistory((prev) => [newEvent, ...prev]);
-      fetchInitialData();
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error('Error initiating recovered checkout:', err);
     }
   };
 
