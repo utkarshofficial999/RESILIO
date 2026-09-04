@@ -5,6 +5,7 @@ import AutonomousIntelligenceHub from './components/AutonomousIntelligenceHub';
 import ExecutiveAnalytics from './components/ExecutiveAnalytics';
 import ABSimulationModal from './components/ABSimulationModal';
 import AsyncOutreachModal from './components/AsyncOutreachModal';
+import LiveRecoveryModal from './components/LiveRecoveryModal';
 import TransactionTimeline from './components/TransactionTimeline';
 import { api } from './services/api';
 import {
@@ -23,6 +24,7 @@ export default function App() {
   const [abReport, setAbReport] = useState(null);
   const [showABModal, setShowABModal] = useState(false);
   const [showAsyncModal, setShowAsyncModal] = useState(false);
+  const [showLiveRecoveryModal, setShowLiveRecoveryModal] = useState(false);
   const [lastSimulatedAmount, setLastSimulatedAmount] = useState(4999);
   const [activeNav, setActiveNav] = useState('dashboard');
 
@@ -88,6 +90,8 @@ export default function App() {
 
       if (result.status === 'PARTIAL_SUCCESS') {
         setShowAsyncModal(true);
+      } else if (payload.gateway === 'RAZORPAY_LIVE_WIDGET') {
+        setShowLiveRecoveryModal(true);
       }
       
       // Refresh telemetry & analytics after recovery
@@ -97,6 +101,30 @@ export default function App() {
       console.error(err);
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleCompleteLiveRecovery = () => {
+    if (latestResult) {
+      const updated = {
+        ...latestResult,
+        status: 'SUCCESS',
+        execution_result: {
+          ...latestResult.execution_result,
+          message: 'Recovered payment captured! 100% GMV secured with 0% drop-off.'
+        }
+      };
+      setLatestResult(updated);
+
+      const newEvent = {
+        attempt_number: history.length + 1,
+        strategy: `${latestResult.selected_strategy || 'RECOVERY'} (CAPTURED)`,
+        status: 'SUCCESS',
+        details: 'Payment recovered & captured autonomously with zero drop-off.',
+        timestamp: new Date().toLocaleTimeString()
+      };
+      setHistory((prev) => [newEvent, ...prev]);
+      fetchInitialData();
     }
   };
 
@@ -305,6 +333,15 @@ export default function App() {
         onClose={() => setShowAsyncModal(false)}
         onCompletePayment={handleCompleteAsyncPayment}
         amount={lastSimulatedAmount}
+      />
+
+      {/* Real-time In-Front Live Recovery Action Modal */}
+      <LiveRecoveryModal
+        isOpen={showLiveRecoveryModal}
+        onClose={() => setShowLiveRecoveryModal(false)}
+        result={latestResult}
+        amount={lastSimulatedAmount}
+        onConfirmPayment={handleCompleteLiveRecovery}
       />
     </div>
   );
