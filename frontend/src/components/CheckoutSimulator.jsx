@@ -107,16 +107,36 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
         },
         modal: {
           ondismiss: function() {
-            setLiveWidgetState('IDLE');
+            setLiveError('Payment session abandoned or closed by customer.');
+            setLiveWidgetState('FAILED');
           }
         }
       };
       
       const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response){
+      rzp.on('payment.failed', async function (response) {
         const desc = response?.error?.description || response?.error?.reason || 'Payment declined by gateway';
         setLiveError(desc);
-        setLiveWidgetState('FAILED');
+        setLiveWidgetState('IDLE');
+
+        // Automatically trigger RESILIO Recovery Multi-Agent flow!
+        const errCode = desc.toLowerCase().includes('not supported') || desc.toLowerCase().includes('funds') || desc.toLowerCase().includes('limit')
+          ? 'INSUFFICIENT_FUNDS'
+          : (response?.error?.code === 'GATEWAY_ERROR' ? 'BANK_TIMEOUT' : 'BANK_DOWN');
+
+        setActiveTab('RESILIO');
+        setSelectedError(errCode);
+        
+        if (onSimulateFailure) {
+          await onSimulateFailure({
+            error_code: errCode,
+            error_description: desc,
+            amount_in_cents: amount * 100,
+            payment_method: 'CARD',
+            bank_name: selectedBank || 'HDFC',
+            gateway: 'RAZORPAY_LIVE_WIDGET'
+          });
+        }
       });
       rzp.open();
     } catch (err) {
@@ -511,18 +531,40 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
                   <XCircle className="w-7 h-7 text-[#CB3837]" />
                 </div>
                 <div className="text-lg font-extrabold text-[#CB3837] font-heading">
-                  Live Checkout Failed
+                  Payment Failed / Interrupted
                 </div>
                 {liveError && (
                   <p className="text-xs text-[#E53E3E] bg-[#FFF5F5] p-2.5 rounded-lg border border-[#FEB2B2] max-w-sm mx-auto break-words font-medium">
                     {liveError}
                   </p>
                 )}
+                <div className="p-3 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#4A5568] text-left space-y-1">
+                  <div className="font-bold text-[#072654] flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5 text-[#2B84EA]" />
+                    <span>Autonomous Recovery Ready</span>
+                  </div>
+                  <p className="text-[11px] text-[#718096]">
+                    Resilio can intercept this failure, evaluate real-time bank health telemetry, and capture the payment without drop-off.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setActiveTab('RESILIO');
+                    const errCode = (liveError || '').toLowerCase().includes('support') || (liveError || '').toLowerCase().includes('funds') || (liveError || '').toLowerCase().includes('limit')
+                      ? 'INSUFFICIENT_FUNDS'
+                      : 'BANK_TIMEOUT';
+                    handleRunResilio(errCode, selectedBank);
+                  }}
+                  className="w-full py-3.5 rounded-lg bg-[#2B84EA] hover:bg-[#1A73E8] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:scale-[0.98] cursor-pointer"
+                >
+                  <Zap className="w-4 h-4" />
+                  <span>RECOVER WITH RESILIO AUTONOMOUS ENGINE</span>
+                </button>
                 <button
                   onClick={() => setLiveWidgetState('IDLE')}
-                  className="rzp-btn-secondary !text-xs !font-bold text-[#CB3837] border-[#F5C6C6] w-full"
+                  className="rzp-btn-secondary !text-xs !font-bold text-[#718096] border-[#CBD5E1] w-full"
                 >
-                  Try Again
+                  Try Razorpay Widget Again
                 </button>
               </div>
             )}
