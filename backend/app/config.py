@@ -1,5 +1,12 @@
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Ensure .env is loaded from root workspace or local directory
+env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+load_dotenv(dotenv_path=env_path)
+load_dotenv() # Fallback local .env
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "RESILIO — Autonomous Payment Recovery Intelligence"
@@ -19,6 +26,10 @@ class Settings(BaseSettings):
     # Simulation Settings
     SIMULATION_MODE: bool = True
     DEFAULT_CURRENCY: str = "INR"
+    
+    # Razorpay Gateway Integration (Test / Live)
+    RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "")
+    RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "")
     
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

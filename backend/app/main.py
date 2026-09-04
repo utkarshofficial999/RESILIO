@@ -7,6 +7,7 @@ from app.api.recovery import router as recovery_router
 from app.api.telemetry import router as telemetry_router
 from app.api.analytics import router as analytics_router
 from app.api.demo import router as demo_router
+from app.api.razorpay_live import router as razorpay_router
 from app.api.ws import router as ws_router
 
 app = FastAPI(
@@ -30,6 +31,7 @@ app.include_router(recovery_router, prefix=settings.API_V1_STR)
 app.include_router(telemetry_router, prefix=settings.API_V1_STR)
 app.include_router(analytics_router, prefix=settings.API_V1_STR)
 app.include_router(demo_router, prefix=settings.API_V1_STR)
+app.include_router(razorpay_router, prefix=settings.API_V1_STR)
 app.include_router(ws_router)
 
 @app.get("/api/v1/health", tags=["Health"])

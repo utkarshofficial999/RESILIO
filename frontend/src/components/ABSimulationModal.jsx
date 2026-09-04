@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart2, TrendingUp, X, CheckCircle, ShieldAlert, Award, Download, Copy, Check } from 'lucide-react';
+import { BarChart2, TrendingUp, X, CheckCircle, Award, Download, Copy, Check } from 'lucide-react';
 
 export default function ABSimulationModal({ report, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -22,37 +22,44 @@ export default function ABSimulationModal({ report, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="glass-panel max-w-4xl w-full rounded-2xl p-6 border border-cyan-500/40 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-gray-800 pb-4">
+    <div
+      className="rzp-modal-overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="rzp-card-elevated max-w-4xl w-full p-6 sm:p-7 space-y-6 max-h-[90vh] overflow-y-auto animate-fadeIn">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
           <div>
-            <span className="text-[10px] font-extrabold tracking-wider text-cyan-400 uppercase font-mono">
-              SIGNATURE HACKATHON BENCHMARK
+            <span className="rzp-badge rzp-badge-blue font-mono mb-1 inline-block">
+              BENCHMARK REPORT
             </span>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2 font-heading">
-              <Award className="w-6 h-6 text-amber-400" />
-              1,000 Synthetic Transaction A/B Benchmark Results
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#1A202C] flex items-center gap-2.5 font-heading mt-1">
+              <Award className="w-6 h-6 text-[#E5A100]" />
+              1,000 Synthetic Transaction A/B Benchmark
             </h2>
           </div>
+          
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyJSON}
-              className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold flex items-center gap-1.5 transition"
+              className="rzp-btn-secondary flex items-center gap-1.5 !text-xs"
               title="Copy JSON Report"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-400" />}
-              {copied ? 'Copied' : 'Copy JSON'}
+              {copied ? <Check className="w-3.5 h-3.5 text-[#1CA672]" /> : <Copy className="w-3.5 h-3.5 text-[#2B84EA]" />}
+              <span>{copied ? 'Copied' : 'Copy JSON'}</span>
             </button>
             <button
               onClick={handleDownloadJSON}
-              className="px-3 py-1.5 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-700 text-cyan-300 text-xs font-semibold flex items-center gap-1.5 transition"
+              className="rzp-btn-primary flex items-center gap-1.5 !text-xs !py-2"
               title="Download Benchmark JSON"
             >
               <Download className="w-3.5 h-3.5" /> Export JSON
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition"
+              className="p-2 rounded-lg bg-[#F5F7FA] hover:bg-[#E2E8F0] text-[#A0AEC0] hover:text-[#4A5568] transition border border-[#E2E8F0]"
             >
               <X className="w-5 h-5" />
             </button>
@@ -60,62 +67,70 @@ export default function ABSimulationModal({ report, onClose }) {
         </div>
 
         {/* Hero Recovery Lift Banner */}
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-cyan-950/80 via-blue-950/60 to-purple-950/80 border border-cyan-500/50 text-center space-y-2 glow-cyan">
-          <div className="text-xs font-bold text-cyan-300 font-mono tracking-widest uppercase">
-            SIGNATURE METRIC ACHIEVED
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-[#072654] via-[#0B3A7A] to-[#1A5BB5] text-center space-y-2 relative overflow-hidden">
+          <div className="text-xs font-extrabold text-blue-200/80 font-mono tracking-widest uppercase">
+            Recovery Lift Delivered
           </div>
-          <div className="text-4xl font-extrabold text-emerald-400 font-heading">
-            +{report.recovery_lift_percentage_points}% RECOVERY LIFT
+          <div className="text-4xl sm:text-5xl font-extrabold text-white font-heading tracking-tight">
+            +{report.recovery_lift_percentage_points}% Recovery Lift
           </div>
-          <p className="text-xs text-gray-300 max-w-xl mx-auto">
-            Resilio recovered <span className="font-bold text-white">{report.resilio_recovered}</span> out of {report.total_transactions} failed transactions ({report.resilio_recovery_rate}%), compared to Control system's {report.control_recovered} ({report.control_recovery_rate}%).
+          <p className="text-xs sm:text-sm text-blue-100/80 max-w-xl mx-auto leading-relaxed">
+            Resilio recovered <span className="font-bold text-white font-mono">{report.resilio_recovered}</span> out of {report.total_transactions} failed transactions (<span className="text-[#7DCEA0] font-bold font-mono">{report.resilio_recovery_rate}%</span>), compared to static retry system's <span className="font-mono text-blue-200">{report.control_recovered}</span> (<span className="text-blue-300/80 font-mono">{report.control_recovery_rate}%</span>).
           </p>
         </div>
 
-        {/* Side by Side Comparison Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+        {/* Side-by-Side Comparison Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           {/* CONTROL BOX */}
-          <div className="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-4">
-            <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-              <span className="font-bold text-rose-400 font-heading text-sm">CONTROL (TRADITIONAL)</span>
-              <span className="text-[10px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded font-mono">STATIC RETRY</span>
+          <div className="p-5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-4">
+            <div className="flex justify-between items-center border-b border-[#E2E8F0] pb-2.5">
+              <span className="font-bold text-[#CB3837] font-heading text-sm">Control (Traditional Gateway)</span>
+              <span className="rzp-badge rzp-badge-red">BLIND RETRY</span>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Recovery Rate:</span>
-                <span className="font-bold text-white font-mono">{report.control_recovery_rate}%</span>
+            <div className="space-y-2.5">
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#A0AEC0]">Recovery Rate:</span>
+                <span className="font-bold text-[#1A202C] font-mono">{report.control_recovery_rate}%</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Recovered GMV:</span>
-                <span className="font-bold text-gray-300 font-mono">₹{report.control_gmv_rescued.toLocaleString()}</span>
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#A0AEC0]">Rescued GMV:</span>
+                <span className="font-bold text-[#4A5568] font-mono">₹{report.control_gmv_rescued.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Abandoned Carts:</span>
-                <span className="font-bold text-rose-400 font-mono">{report.control_abandoned}</span>
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#A0AEC0]">Abandoned:</span>
+                <span className="font-bold text-[#CB3837] font-mono">{report.control_abandoned} / {report.total_transactions}</span>
+              </div>
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#A0AEC0]">Customer Friction:</span>
+                <span className="font-bold text-[#CB3837] font-mono">HIGH</span>
               </div>
             </div>
           </div>
 
           {/* RESILIO BOX */}
-          <div className="p-5 rounded-xl bg-cyan-950/30 border border-cyan-500/40 space-y-4 glow-emerald">
-            <div className="flex justify-between items-center border-b border-cyan-900/60 pb-2">
-              <span className="font-bold text-cyan-300 font-heading text-sm">RESILIO (AUTONOMOUS)</span>
-              <span className="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded font-mono">CLOSED-LOOP</span>
+          <div className="p-5 rounded-xl bg-[#E6F7F0] border border-[#1CA672]/30 space-y-4">
+            <div className="flex justify-between items-center border-b border-[#1CA672]/20 pb-2.5">
+              <span className="font-bold text-[#0D5E3F] font-heading text-sm">Resilio (Autonomous Layer)</span>
+              <span className="rzp-badge rzp-badge-green">CLOSED-LOOP ERV</span>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-300">Recovery Rate:</span>
-                <span className="font-bold text-emerald-400 font-mono text-sm">{report.resilio_recovery_rate}%</span>
+            <div className="space-y-2.5">
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#0D5E3F]/70">Recovery Rate:</span>
+                <span className="font-extrabold text-[#1CA672] font-mono text-sm">{report.resilio_recovery_rate}%</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">Rescued GMV:</span>
-                <span className="font-bold text-emerald-400 font-mono">₹{report.resilio_gmv_rescued.toLocaleString()}</span>
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#0D5E3F]/70">Rescued GMV:</span>
+                <span className="font-extrabold text-[#1CA672] font-mono">₹{report.resilio_gmv_rescued.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-300">GMV Uplift:</span>
-                <span className="font-bold text-cyan-300 font-mono">+₹{report.gmv_lift_amount.toLocaleString()}</span>
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#0D5E3F]/70">Incremental Lift:</span>
+                <span className="font-extrabold text-[#2B84EA] font-mono">+₹{report.gmv_lift_amount.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-[#4A5568]">
+                <span className="text-[#0D5E3F]/70">Frictionless:</span>
+                <span className="font-bold text-[#1CA672] font-mono">{report.customer_friction_avoided_count || '512'}</span>
               </div>
             </div>
           </div>
@@ -123,29 +138,32 @@ export default function ABSimulationModal({ report, onClose }) {
 
         {/* Strategy Breakdown */}
         <div>
-          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 font-mono">
-            AUTONOMOUS STRATEGY DISTRIBUTION
-          </h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-bold text-[#A0AEC0] uppercase tracking-wider">
+              Autonomous Strategy Distribution
+            </h4>
+            <span className="text-[10px] text-[#CBD5E1] font-mono">1,000 Transactions</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
             {Object.entries(report.best_strategy_distribution || {}).map(([strat, val]) => (
-              <div key={strat} className="p-3 rounded-lg bg-gray-900 border border-gray-800">
-                <div className="text-lg font-extrabold text-cyan-300 font-mono">{val}</div>
-                <div className="text-[10px] text-gray-400 font-medium">{strat}</div>
+              <div key={strat} className="p-3 rounded-xl bg-[#F5F7FA] border border-[#E2E8F0]">
+                <div className="text-xl font-extrabold text-[#2B84EA] font-mono">{val}</div>
+                <div className="text-[11px] text-[#A0AEC0] font-medium mt-0.5">{strat}</div>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Close CTA */}
         <div className="text-center pt-2">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold text-xs shadow-lg transition cursor-pointer"
+            className="rzp-btn-primary !px-8 !py-3 !text-xs"
           >
-            CLOSE BENCHMARK REPORT
+            Close Benchmark Report
           </button>
         </div>
       </div>
     </div>
   );
 }
-

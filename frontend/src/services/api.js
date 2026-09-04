@@ -41,6 +41,27 @@ export const api = {
       outage_bank: outageBank
     });
     return res.data;
+  },
+
+  // Razorpay Real Checkout APIs
+  getRazorpayKey: async () => {
+    const res = await axios.get(`${API_BASE_URL}/razorpay/key`);
+    return res.data;
+  },
+
+  createRazorpayOrder: async (amountInCents, currency = 'INR') => {
+    const res = await axios.post(`${API_BASE_URL}/razorpay/create-order`, {
+      amount_in_cents: amountInCents,
+      currency: currency,
+      customer_id: 'cust_live_demo',
+      merchant_id: 'merch_hackathon_001'
+    });
+    return res.data;
+  },
+
+  verifyPayment: async (paymentId, orderId) => {
+    const res = await axios.post(`${API_BASE_URL}/razorpay/verify-payment?payment_id=${paymentId}&order_id=${orderId}`);
+    return res.data;
   }
 };
 

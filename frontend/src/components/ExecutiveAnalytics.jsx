@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, DollarSign, Clock, ShieldCheck } from 'lucide-react';
+import { TrendingUp, IndianRupee, Clock, ShieldCheck, ArrowUpRight } from 'lucide-react';
 
 export default function ExecutiveAnalytics({ analyticsData }) {
   const summary = analyticsData?.summary || {
@@ -12,58 +12,95 @@ export default function ExecutiveAnalytics({ analyticsData }) {
     frictionless_recoveries_count: 512
   };
 
+  const metrics = [
+    {
+      label: 'Recovery Lift',
+      value: summary.recovery_lift,
+      sub: (
+        <span className="flex items-center gap-1.5">
+          <span className="font-semibold text-[#1CA672]">{summary.resilio_recovery_rate}</span>
+          <span className="text-[#A0AEC0]">vs control</span>
+          <span className="line-through text-[#CBD5E1]">{summary.control_recovery_rate}</span>
+        </span>
+      ),
+      icon: TrendingUp,
+      accentColor: '#2B84EA',
+      bgColor: '#E8F1FD',
+    },
+    {
+      label: 'Rescued GMV',
+      value: `₹${summary.total_rescued_gmv_inr ? summary.total_rescued_gmv_inr.toLocaleString() : '4,540,000'}`,
+      sub: (
+        <span className="flex items-center gap-1 text-[#1CA672] font-semibold">
+          <ArrowUpRight className="w-3 h-3" /> 100% Captured
+        </span>
+      ),
+      icon: IndianRupee,
+      accentColor: '#1CA672',
+      bgColor: '#E6F7F0',
+    },
+    {
+      label: 'Decision Latency',
+      value: (
+        <span className="font-mono">{summary.average_recovery_latency_ms}<span className="text-sm font-normal text-[#A0AEC0] ml-0.5">ms</span></span>
+      ),
+      sub: <span className="text-[#2B84EA] font-medium">In-flight execution • Zero lock</span>,
+      icon: Clock,
+      accentColor: '#6C5CE7',
+      bgColor: '#F0EEFF',
+    },
+    {
+      label: 'Frictionless Actions',
+      value: <span className="font-mono">{summary.frictionless_recoveries_count}</span>,
+      sub: (
+        <span>
+          <span className="font-medium text-[#6C5CE7]">{summary.unnecessary_retries_prevented} blind retries</span>{' '}
+          <span className="text-[#A0AEC0]">intercepted</span>
+        </span>
+      ),
+      icon: ShieldCheck,
+      accentColor: '#E5A100',
+      bgColor: '#FFF8E6',
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-      {/* Metric 1: Recovery Lift */}
-      <div className="glass-panel p-4 rounded-xl border border-cyan-500/30 flex items-center justify-between">
-        <div>
-          <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider font-mono">RECOVERY LIFT</span>
-          <div className="text-2xl font-extrabold text-white font-heading mt-0.5">{summary.recovery_lift}</div>
-          <span className="text-[11px] text-gray-400">Resilio ({summary.resilio_recovery_rate}) vs Control ({summary.control_recovery_rate})</span>
-        </div>
-        <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">
-          <TrendingUp className="w-5 h-5" />
-        </div>
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {metrics.map((m, i) => {
+        const Icon = m.icon;
+        return (
+          <div
+            key={i}
+            className="rzp-card p-5 relative overflow-hidden group"
+          >
+            {/* Left accent bar */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
+              style={{ background: m.accentColor }}
+            />
 
-      {/* Metric 2: Rescued GMV */}
-      <div className="glass-panel p-4 rounded-xl border border-emerald-500/30 flex items-center justify-between">
-        <div>
-          <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider font-mono">RESCUED GMV</span>
-          <div className="text-2xl font-extrabold text-emerald-300 font-heading mt-0.5">
-            ₹{summary.total_rescued_gmv_inr ? summary.total_rescued_gmv_inr.toLocaleString() : '4,540,000'}
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-bold text-[#A0AEC0] uppercase tracking-wider">
+                {m.label}
+              </span>
+              <div
+                className="p-2 rounded-lg"
+                style={{ background: m.bgColor }}
+              >
+                <Icon className="w-4 h-4" style={{ color: m.accentColor }} />
+              </div>
+            </div>
+
+            <div className="text-xl font-extrabold text-[#1A202C] font-heading tracking-tight">
+              {m.value}
+            </div>
+
+            <div className="text-[11px] text-[#4A5568] mt-1.5">
+              {m.sub}
+            </div>
           </div>
-          <span className="text-[11px] text-gray-400">Direct revenue captured</span>
-        </div>
-        <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
-          <DollarSign className="w-5 h-5" />
-        </div>
-      </div>
-
-      {/* Metric 3: Recovery Latency */}
-      <div className="glass-panel p-4 rounded-xl border border-gray-800 flex items-center justify-between">
-        <div>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">DECISION LATENCY</span>
-          <div className="text-2xl font-extrabold text-white font-heading mt-0.5">{summary.average_recovery_latency_ms}ms</div>
-          <span className="text-[11px] text-gray-400">Real-time rail rerouting</span>
-        </div>
-        <div className="p-2.5 rounded-lg bg-gray-800 text-cyan-400 border border-gray-700 shrink-0">
-          <Clock className="w-5 h-5" />
-        </div>
-      </div>
-
-      {/* Metric 4: Frictionless Recoveries */}
-      <div className="glass-panel p-4 rounded-xl border border-purple-500/30 flex items-center justify-between">
-        <div>
-          <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider font-mono">AUTONOMOUS ACTIONS</span>
-          <div className="text-2xl font-extrabold text-purple-200 font-heading mt-0.5">{summary.frictionless_recoveries_count}</div>
-          <span className="text-[11px] text-gray-400">Zero user intervention required</span>
-        </div>
-        <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 shrink-0">
-          <ShieldCheck className="w-5 h-5" />
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }
-

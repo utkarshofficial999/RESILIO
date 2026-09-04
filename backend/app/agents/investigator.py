@@ -15,19 +15,24 @@ def investigate_failure_node(state: ResilioState) -> Dict[str, Any]:
     infra_errors = ["BANK_TIMEOUT", "GATEWAY_TIMEOUT", "BANK_DOWN", "NETWORK_ERROR", "SERVER_ERROR"]
     user_errors = ["INSUFFICIENT_FUNDS", "CARD_DECLINED", "INVALID_OTP", "LIMIT_EXCEEDED", "UPI_FAILED"]
     
-    if error_code in infra_errors or "timeout" in error_desc.lower() or "down" in error_desc.lower():
+    if error_code in infra_errors or "timeout" in error_desc.lower() or "down" in error_desc.lower() or "down" in error_code.lower() or "50" in error_desc:
         category = "INFRASTRUCTURE"
         severity = "HIGH"
         recoverability = "HIGH"
         recommended = ["REROUTE", "RETRY", "WAIT_AND_RETRY"]
-        reason = f"Infrastructure bottleneck identified on {state.get('bank_name')} rail. System side timeout or gateway drop."
-    elif error_code in user_errors or "funds" in error_desc.lower() or "declined" in error_desc.lower():
+        reason = f"Infrastructure bottleneck identified on {state.get('bank_name', 'bank')} rail. System side timeout or gateway drop."
+    elif error_code in user_errors or "funds" in error_desc.lower() or "declined" in error_desc.lower() or "otp" in error_desc.lower():
         category = "USER_INTENT"
         severity = "MEDIUM"
         recoverability = "MODERATE"
         recommended = ["UI_FLIP", "ASYNC_RECOVERY"]
         reason = f"Payment failure caused by user account or instrument limit. Zero-friction rail flip recommended."
-    reason = reason
+    else:
+        category = "INFRASTRUCTURE"
+        severity = "MEDIUM"
+        recoverability = "HIGH"
+        recommended = ["REROUTE", "RETRY"]
+        reason = f"Transient gateway issue detected for {state.get('bank_name', 'bank')}. Autonomous rail rerouting suggested."
     # Optionally enrich with Groq LLM AI Diagnosis if API key is active
     ai_prompt = f"Analyze payment failure: bank={state.get('bank_name')}, error_code={error_code}, description='{error_desc}'. In 1 concise sentence (under 25 words), diagnose the root cause for payment recovery."
     ai_diagnosis = call_groq_llm(ai_prompt)

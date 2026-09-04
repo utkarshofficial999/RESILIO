@@ -7,6 +7,10 @@ import ABSimulationModal from './components/ABSimulationModal';
 import AsyncOutreachModal from './components/AsyncOutreachModal';
 import TransactionTimeline from './components/TransactionTimeline';
 import { api } from './services/api';
+import {
+  Home, Receipt, BarChart3, Settings, CreditCard, Link2, FileText,
+  LayoutDashboard, Zap, Shield, Activity, HelpCircle, ChevronDown
+} from 'lucide-react';
 
 export default function App() {
   const [telemetry, setTelemetry] = useState(null);
@@ -20,6 +24,7 @@ export default function App() {
   const [showABModal, setShowABModal] = useState(false);
   const [showAsyncModal, setShowAsyncModal] = useState(false);
   const [lastSimulatedAmount, setLastSimulatedAmount] = useState(4999);
+  const [activeNav, setActiveNav] = useState('dashboard');
 
   // Fetch initial telemetry and analytics
   useEffect(() => {
@@ -157,43 +162,136 @@ export default function App() {
     }
   };
 
+  const sidebarNav = [
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'transactions', label: 'Transactions', icon: Receipt },
+    { id: 'settlements', label: 'Settlements', icon: CreditCard },
+    { id: 'reports', label: 'Reports', icon: BarChart3 },
+  ];
+
+  const sidebarProducts = [
+    { id: 'recovery', label: 'Recovery Engine', icon: Zap, highlight: true },
+    { id: 'links', label: 'Payment Links', icon: Link2 },
+    { id: 'pages', label: 'Payment Pages', icon: FileText },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#07090E] text-slate-100 pb-12 font-sans selection:bg-cyan-500 selection:text-black">
-      {/* Header Navigation */}
-      <Header
-        onInjectOutage={handleInjectOutage}
-        onResetTelemetry={handleResetTelemetry}
-        onRunDemo={handleRunABDemo}
-        isOutageActive={isOutageActive}
-      />
-
-      {/* Main Control Plane Dashboard */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
-        {/* Executive Analytics KPI Bar */}
-        <ExecutiveAnalytics analyticsData={analytics} />
-
-        {/* Hero Interactive Split Plane: Checkout Sandbox & Intelligence Hub */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          <CheckoutSimulator
-            onSimulateFailure={handleProcessFailure}
-            onConfirmUIFlip={handleConfirmUIFlip}
-            isProcessing={isProcessing}
-            recoveryResult={latestResult}
-          />
-
-          <AutonomousIntelligenceHub
-            latestResult={latestResult}
-            telemetry={telemetry}
-            isProcessing={isProcessing}
-          />
+    <div className="min-h-screen bg-[#F5F7FA] text-[#1A202C] font-sans selection:bg-blue-100 selection:text-blue-900">
+      {/* ===== LEFT SIDEBAR — Razorpay Dashboard Style ===== */}
+      <aside className="rzp-sidebar">
+        {/* Logo Area */}
+        <div className="px-5 py-5 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+              <Zap className="w-4.5 h-4.5 text-[#528FF0]" />
+            </div>
+            <div>
+              <div className="text-base font-extrabold text-white tracking-tight leading-tight">RESILIO</div>
+              <div className="text-[10px] text-blue-300/70 font-semibold tracking-wide">by Razorpay</div>
+            </div>
+          </div>
         </div>
 
-        {/* Event Timeline Ledger */}
-        <TransactionTimeline
-          history={history}
-          onClearHistory={handleClearHistory}
+        {/* Main Navigation */}
+        <nav className="flex-1 py-3 overflow-y-auto">
+          <div className="rzp-sidebar-section">Main Menu</div>
+          {sidebarNav.map(item => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.id}
+                className={`rzp-sidebar-item ${activeNav === item.id ? 'active' : ''}`}
+                onClick={() => setActiveNav(item.id)}
+              >
+                <Icon className="w-[18px] h-[18px]" />
+                <span>{item.label}</span>
+              </div>
+            );
+          })}
+
+          <div className="rzp-sidebar-section mt-2">Recovery Products</div>
+          {sidebarProducts.map(item => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.id}
+                className={`rzp-sidebar-item ${activeNav === item.id ? 'active' : ''}`}
+                onClick={() => setActiveNav(item.id)}
+              >
+                <Icon className="w-[18px] h-[18px]" />
+                <span>{item.label}</span>
+                {item.highlight && (
+                  <span className="ml-auto text-[9px] bg-blue-500/30 text-blue-200 px-2 py-0.5 rounded-full font-bold">
+                    NEW
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Sidebar Footer */}
+        <div className="border-t border-white/10 px-5 py-4">
+          <div className="flex items-center gap-2.5 text-xs">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot" />
+            <span className="text-white/60 font-medium">Test Mode</span>
+            <span className="ml-auto text-[10px] bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-bold border border-green-500/30">
+              ACTIVE
+            </span>
+          </div>
+          <div className="flex items-center gap-2 mt-3 cursor-pointer group">
+            <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/80">
+              UY
+            </div>
+            <span className="text-xs text-white/60 group-hover:text-white/80 transition">Account & Settings</span>
+          </div>
+        </div>
+      </aside>
+
+      {/* ===== MAIN CONTENT AREA ===== */}
+      <div className="ml-0 md:ml-[240px] min-h-screen flex flex-col">
+        {/* Test Mode Banner Strip */}
+        <div className="rzp-test-strip flex items-center justify-center gap-2">
+          <span className="inline-block w-2 h-2 rounded-full bg-amber-500" />
+          <span>TEST MODE — All transactions are simulated. No real money will be debited.</span>
+        </div>
+
+        {/* Top Header Bar */}
+        <Header
+          onInjectOutage={handleInjectOutage}
+          onResetTelemetry={handleResetTelemetry}
+          onRunDemo={handleRunABDemo}
+          isOutageActive={isOutageActive}
         />
-      </main>
+
+        {/* Main Dashboard Content */}
+        <main className="flex-1 px-6 lg:px-8 py-6 space-y-6 max-w-[1400px]">
+          {/* Executive Analytics KPI Bar */}
+          <ExecutiveAnalytics analyticsData={analytics} />
+
+          {/* Hero Interactive Split Plane: Checkout Sandbox & Intelligence Hub */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <CheckoutSimulator
+              onSimulateFailure={handleProcessFailure}
+              onConfirmUIFlip={handleConfirmUIFlip}
+              isProcessing={isProcessing}
+              recoveryResult={latestResult}
+            />
+
+            <AutonomousIntelligenceHub
+              latestResult={latestResult}
+              telemetry={telemetry}
+              isProcessing={isProcessing}
+            />
+          </div>
+
+          {/* Event Timeline Ledger */}
+          <TransactionTimeline
+            history={history}
+            onClearHistory={handleClearHistory}
+          />
+        </main>
+      </div>
 
       {/* 1-Click Signature A/B Benchmark Modal */}
       <ABSimulationModal
@@ -211,5 +309,3 @@ export default function App() {
     </div>
   );
 }
-
-

@@ -1,54 +1,435 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Mulish:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #07090E;
-  color: #F8FAFC;
+  /* Razorpay Brand Colors */
+  --rzp-navy: #072654;
+  --rzp-navy-light: #0B3A7A;
+  --rzp-blue: #2B84EA;
+  --rzp-blue-light: #528FF0;
+  --rzp-blue-pale: #E8F1FD;
+  --rzp-green: #1CA672;
+  --rzp-green-light: #E6F7F0;
+  --rzp-red: #CB3837;
+  --rzp-red-light: #FDEAEA;
+  --rzp-amber: #E5A100;
+  --rzp-amber-light: #FFF8E6;
+  --rzp-purple: #6C5CE7;
+  --rzp-purple-light: #F0EEFF;
+
+  /* Surface & Layout */
+  --rzp-bg: #F5F7FA;
+  --rzp-surface: #FFFFFF;
+  --rzp-surface-hover: #F8FAFC;
+  --rzp-border: #E2E8F0;
+  --rzp-border-light: #EDF2F7;
+
+  /* Typography */
+  --rzp-text-primary: #1A202C;
+  --rzp-text-secondary: #4A5568;
+  --rzp-text-muted: #A0AEC0;
+  --rzp-text-inverse: #FFFFFF;
+
+  font-family: 'Mulish', 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--rzp-bg);
+  color: var(--rzp-text-primary);
+  color-scheme: light;
 }
 
 h1, h2, h3, h4, .font-heading {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Mulish', 'Inter', sans-serif;
+  font-weight: 700;
 }
 
-/* Glassmorphism Styles */
-.glass-panel {
-  background: rgba(19, 27, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.font-mono {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
 }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+/* Custom Scrollbar — Clean professional style */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.glass-pill {
-  background: rgba(0, 210, 255, 0.1);
-  border: 1px solid rgba(0, 210, 255, 0.3);
-  color: #00D2FF;
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+  border-radius: 3px;
 }
 
-.glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 210, 255, 0.35);
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
 }
 
-.glow-emerald {
-  box-shadow: 0 0 20px rgba(0, 230, 118, 0.35);
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }
 
-/* Pulse shimmer for dynamic payment rail flip */
-@keyframes pulse-shimmer {
-  0% { opacity: 0.6; transform: scale(0.99); }
-  50% { opacity: 1; transform: scale(1.01); box-shadow: 0 0 25px rgba(0, 210, 255, 0.5); }
-  100% { opacity: 0.6; transform: scale(0.99); }
+/* ========================================
+   Razorpay Professional Card System
+   ======================================== */
+
+/* Primary card surface — white with subtle shadow */
+.rzp-card {
+  background: var(--rzp-surface);
+  border: 1px solid var(--rzp-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.shimmer-active {
-  animation: pulse-shimmer 1.5s infinite ease-in-out;
+.rzp-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Elevated card — for important sections */
+.rzp-card-elevated {
+  background: var(--rzp-surface);
+  border: 1px solid var(--rzp-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Input field styling — clean Razorpay-style */
+.rzp-input {
+  background: var(--rzp-surface);
+  border: 1.5px solid var(--rzp-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--rzp-text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.rzp-input:focus {
+  border-color: var(--rzp-blue);
+  box-shadow: 0 0 0 3px rgba(43, 132, 234, 0.12);
+}
+
+.rzp-input::placeholder {
+  color: var(--rzp-text-muted);
+}
+
+/* Select styling */
+.rzp-select {
+  background: var(--rzp-surface);
+  border: 1.5px solid var(--rzp-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--rzp-text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234A5568' d='M6 8.825c-.2 0-.4-.075-.55-.225l-3-3a.723.723 0 01-.213-.538c.009-.2.084-.387.213-.512a.74.74 0 011.05 0L6 7.05 8.5 4.55a.74.74 0 011.05 0c.142.137.217.325.217.525s-.075.387-.217.525l-3 3a.773.773 0 01-.55.225z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.rzp-select:focus {
+  border-color: var(--rzp-blue);
+  box-shadow: 0 0 0 3px rgba(43, 132, 234, 0.12);
+}
+
+/* ========================================
+   Button Styles — Razorpay
+   ======================================== */
+
+.rzp-btn-primary {
+  background: var(--rzp-blue);
+  color: white;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(43, 132, 234, 0.2);
+}
+
+.rzp-btn-primary:hover {
+  background: #1A73D9;
+  box-shadow: 0 3px 8px rgba(43, 132, 234, 0.3);
+  transform: translateY(-1px);
+}
+
+.rzp-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(43, 132, 234, 0.2);
+}
+
+.rzp-btn-secondary {
+  background: var(--rzp-surface);
+  color: var(--rzp-text-primary);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  border: 1.5px solid var(--rzp-border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rzp-btn-secondary:hover {
+  background: var(--rzp-surface-hover);
+  border-color: #CBD5E1;
+}
+
+.rzp-btn-navy {
+  background: var(--rzp-navy);
+  color: white;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rzp-btn-navy:hover {
+  background: var(--rzp-navy-light);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   Badge System — Razorpay
+   ======================================== */
+
+.rzp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.rzp-badge-blue {
+  background: var(--rzp-blue-pale);
+  color: var(--rzp-blue);
+}
+
+.rzp-badge-green {
+  background: var(--rzp-green-light);
+  color: var(--rzp-green);
+}
+
+.rzp-badge-red {
+  background: var(--rzp-red-light);
+  color: var(--rzp-red);
+}
+
+.rzp-badge-amber {
+  background: var(--rzp-amber-light);
+  color: #B8860B;
+}
+
+.rzp-badge-purple {
+  background: var(--rzp-purple-light);
+  color: var(--rzp-purple);
+}
+
+.rzp-badge-navy {
+  background: #E8EDF4;
+  color: var(--rzp-navy);
+}
+
+/* ========================================
+   Sidebar Layout
+   ======================================== */
+
+.rzp-sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: var(--rzp-navy);
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease;
+}
+
+.rzp-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-left: 3px solid transparent;
+}
+
+.rzp-sidebar-item:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.rzp-sidebar-item.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: var(--rzp-blue);
+  font-weight: 700;
+}
+
+.rzp-sidebar-section {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.35);
+  padding: 18px 20px 8px;
+}
+
+/* ========================================
+   Top Header Bar
+   ======================================== */
+
+.rzp-topbar {
+  background: var(--rzp-surface);
+  border-bottom: 1px solid var(--rzp-border);
+  padding: 0 28px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+/* ========================================
+   Progress Bars — Razorpay
+   ======================================== */
+
+.rzp-progress-track {
+  background: #EDF2F7;
+  border-radius: 100px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.rzp-progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+
+/* ========================================
+   Animations — Subtle & Professional
+   ======================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 1.5s linear infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+/* Modal overlay */
+.rzp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 38, 84, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* Shimmer loading bar */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.rzp-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.rzp-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(43, 132, 234, 0.08) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s infinite;
+}
+
+/* Test mode banner strip */
+.rzp-test-strip {
+  background: #FFF8E6;
+  border-bottom: 1px solid #F0E0A0;
+  color: #92600A;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px 0;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive sidebar hide */
+@media (max-width: 768px) {
+  .rzp-sidebar {
+    width: 0;
+    overflow: hidden;
+  }
 }
