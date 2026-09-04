@@ -243,9 +243,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] text-[#1A202C] font-sans selection:bg-blue-100 selection:text-blue-900">
-      {/* ===== LEFT SIDEBAR — Razorpay Dashboard Style ===== */}
       <aside className="rzp-sidebar">
-        {/* Logo Area */}
         <div className="px-5 py-5 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
@@ -258,7 +256,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Main Navigation */}
         <nav className="flex-1 py-3 overflow-y-auto">
           <div className="rzp-sidebar-section">Main Menu</div>
           {sidebarNav.map(item => {
@@ -296,7 +293,6 @@ export default function App() {
           })}
         </nav>
 
-        {/* Sidebar Footer */}
         <div className="border-t border-white/10 px-5 py-4">
           <div className="flex items-center gap-2.5 text-xs">
             <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot" />
@@ -314,15 +310,12 @@ export default function App() {
         </div>
       </aside>
 
-      {/* ===== MAIN CONTENT AREA ===== */}
       <div className="ml-0 md:ml-[240px] min-h-screen flex flex-col">
-        {/* Test Mode Banner Strip */}
         <div className="rzp-test-strip flex items-center justify-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-amber-500" />
           <span>TEST MODE — All transactions are simulated. No real money will be debited.</span>
         </div>
 
-        {/* Top Header Bar */}
         <Header
           onInjectOutage={handleInjectOutage}
           onResetTelemetry={handleResetTelemetry}
@@ -330,12 +323,9 @@ export default function App() {
           isOutageActive={isOutageActive}
         />
 
-        {/* Main Dashboard Content */}
         <main className="flex-1 px-6 lg:px-8 py-6 space-y-6 max-w-[1400px]">
-          {/* Executive Analytics KPI Bar */}
           <ExecutiveAnalytics analyticsData={analytics} />
 
-          {/* Hero Interactive Split Plane: Checkout Sandbox & Intelligence Hub */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <CheckoutSimulator
               onSimulateFailure={handleProcessFailure}
@@ -351,7 +341,6 @@ export default function App() {
             />
           </div>
 
-          {/* Event Timeline Ledger */}
           <TransactionTimeline
             history={history}
             onClearHistory={handleClearHistory}
@@ -359,13 +348,11 @@ export default function App() {
         </main>
       </div>
 
-      {/* 1-Click Signature A/B Benchmark Modal */}
       <ABSimulationModal
         report={abReport}
         onClose={() => setShowABModal(false)}
       />
 
-      {/* Async WhatsApp Recovery Link Simulator Modal */}
       <AsyncOutreachModal
         isOpen={showAsyncModal}
         onClose={() => setShowAsyncModal(false)}
@@ -373,7 +360,6 @@ export default function App() {
         amount={lastSimulatedAmount}
       />
 
-      {/* Real-time In-Front Live Recovery Action Modal */}
       <LiveRecoveryModal
         isOpen={showLiveRecoveryModal}
         onClose={() => setShowLiveRecoveryModal(false)}

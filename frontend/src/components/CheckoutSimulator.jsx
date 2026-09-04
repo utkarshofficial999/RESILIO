@@ -118,7 +118,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
       
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', async function (response) {
-        // Close modal safely using official SDK method
         try {
           rzp.close();
         } catch (e) {}
@@ -127,7 +126,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
         setLiveError(desc);
         setLiveWidgetState('IDLE');
 
-        // 2. Automatically trigger RESILIO Recovery Multi-Agent flow!
         const errCode = desc.toLowerCase().includes('not supported') || desc.toLowerCase().includes('funds') || desc.toLowerCase().includes('limit')
           ? 'INSUFFICIENT_FUNDS'
           : (response?.error?.code === 'GATEWAY_ERROR' ? 'BANK_TIMEOUT' : 'BANK_DOWN');
@@ -157,7 +155,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
 
   return (
     <div className="rzp-card-elevated p-6 flex flex-col gap-5">
-      {/* Header & Mode Switcher */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
@@ -171,7 +168,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
           </h2>
         </div>
 
-        {/* Tab Toggle */}
         <div className="flex p-1 bg-[#F5F7FA] rounded-lg border border-[#E2E8F0] text-xs font-semibold">
           <button
             onClick={() => setActiveTab('RESILIO')}
@@ -209,7 +205,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
         </div>
       </div>
 
-      {/* 1-Click Preset Shock Triggers */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <span className="text-[11px] font-bold text-[#A0AEC0] uppercase tracking-wider">
@@ -243,7 +238,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
         </div>
       </div>
 
-      {/* Custom Transaction Configuration */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#F5F7FA] p-4 rounded-xl border border-[#E2E8F0] text-xs">
         <div>
           <label className="text-[#4A5568] font-semibold block mb-1.5 text-[11px] uppercase tracking-wide">Cart Amount (INR)</label>
@@ -287,10 +281,8 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
         </div>
       </div>
 
-      {/* === Checkout Area === */}
       {activeTab === 'RESILIO' && (
         <div className="p-5 rounded-xl bg-white border-2 border-[#2B84EA]/20 relative overflow-hidden shadow-sm">
-          {/* Top PG Bar */}
           <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3 mb-5">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-[#E8F1FD] text-[#2B84EA]">
@@ -311,7 +303,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
               </div>
             </div>
 
-            {/* Default State */}
             {!recoveryResult && !isProcessing && (
               <div className="space-y-3.5">
                 <div className="p-3.5 rounded-lg bg-[#F5F7FA] border border-[#E2E8F0] space-y-2 text-xs">
@@ -335,7 +326,6 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
               </div>
             )}
 
-            {/* Processing State */}
             {isProcessing && (
               <div className="p-6 rounded-xl bg-[#E8F1FD] border border-[#2B84EA]/30 text-center space-y-3 rzp-shimmer">
                 <RefreshCw className="w-8 h-8 text-[#2B84EA] animate-spin-slow mx-auto" />

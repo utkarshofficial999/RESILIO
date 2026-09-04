@@ -26,7 +26,6 @@ export default function LiveRecoveryModal({ isOpen, onClose, result, amount = 49
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-white rounded-2xl shadow-2xl border-2 border-[#2B84EA] max-w-lg w-full overflow-hidden animate-fadeIn text-[#1A202C]">
-        {/* Header Ribbon */}
         <div className="bg-[#072654] px-6 py-4 text-white flex items-center justify-between border-b border-[#2B84EA]/30">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#2B84EA] flex items-center justify-center text-white shadow-sm">
@@ -48,9 +47,7 @@ export default function LiveRecoveryModal({ isOpen, onClose, result, amount = 49
           </button>
         </div>
 
-        {/* Content Body */}
         <div className="p-6 space-y-5">
-          {/* Failure Alert Banner */}
           <div className="p-3.5 rounded-xl bg-[#FFF5F5] border border-[#FEB2B2] flex items-start gap-3 text-xs">
             <div className="w-2.5 h-2.5 rounded-full bg-[#E53E3E] mt-1 shrink-0 animate-pulse" />
             <div className="space-y-0.5">
@@ -61,7 +58,6 @@ export default function LiveRecoveryModal({ isOpen, onClose, result, amount = 49
             </div>
           </div>
 
-          {/* Autonomous Strategy Pick */}
           <div className="p-4 rounded-xl bg-[#F0F7FF] border border-[#BEE3F8] space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#2B84EA] uppercase tracking-wider font-mono">
@@ -89,14 +85,12 @@ export default function LiveRecoveryModal({ isOpen, onClose, result, amount = 49
             </div>
           </div>
 
-          {/* Amount and Call to Action */}
           <div className="bg-[#F8FAFC] p-4 rounded-xl border border-[#E2E8F0] space-y-3">
             <div className="flex justify-between items-center text-xs">
               <span className="text-[#718096] font-semibold">Total Order Amount:</span>
               <span className="text-xl font-extrabold text-[#1A202C] font-heading">₹{amount.toLocaleString()}</span>
             </div>
 
-            {/* Primary Action Button */}
             <button
               onClick={handlePay}
               className="w-full py-4 rounded-xl bg-[#1CA672] hover:bg-[#168E61] text-white font-extrabold text-sm shadow-lg shadow-[#1CA672]/30 transition-all transform hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
@@ -115,7 +109,6 @@ export default function LiveRecoveryModal({ isOpen, onClose, result, amount = 49
             </button>
           </div>
 
-          {/* Secondary Dismiss / Inspect */}
           <div className="flex items-center justify-between text-xs pt-1">
             <span className="text-[#A0AEC0] flex items-center gap-1 font-mono text-[11px]">
               <ShieldCheck className="w-3.5 h-3.5 text-[#1CA672]" /> 100% Zero Drop-Off Guarantee
