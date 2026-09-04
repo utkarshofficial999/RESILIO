@@ -109,24 +109,16 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
           ondismiss: function() {
             setLiveError('Payment session abandoned or closed by customer.');
             setLiveWidgetState('FAILED');
-            document.querySelectorAll('.razorpay-container, iframe[name^="rzp_"]').forEach(el => {
-              try { el.remove(); } catch (e) {}
-            });
           }
         }
       };
       
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', async function (response) {
-        // 1. Force close and remove Razorpay popup iframe so Resilio appears directly in the front!
+        // Close modal safely using official SDK method
         try {
           rzp.close();
         } catch (e) {}
-        setTimeout(() => {
-          document.querySelectorAll('.razorpay-container, iframe[name^="rzp_"]').forEach(el => {
-            try { el.remove(); } catch (e) {}
-          });
-        }, 50);
 
         const desc = response?.error?.description || response?.error?.reason || 'Payment declined by gateway';
         setLiveError(desc);
