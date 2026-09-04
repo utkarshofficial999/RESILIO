@@ -76,6 +76,7 @@ def create_test_order(payload: CreateOrderRequest):
         return {
             "status": "ORDER_CREATED_ON_RAZORPAY",
             "order_id": order.get("id"),
+            "id": order.get("id"),
             "amount": order.get("amount"),
             "currency": order.get("currency"),
             "receipt": order.get("receipt"),

@@ -18,6 +18,7 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
   const [activeTab, setActiveTab] = useState('RESILIO');
   const [standardState, setStandardState] = useState('IDLE');
   const [liveWidgetState, setLiveWidgetState] = useState('IDLE');
+  const [liveError, setLiveError] = useState('');
 
   const handleRunStandard = () => {
     setStandardState('FAIL');
@@ -43,9 +44,9 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
   };
 
   const handle1TapUPI = () => {
-    confetti({ particleCount: 75, spread: 75, origin: { y: 0.6 } });
     if (onConfirmUIFlip) {
       onConfirmUIFlip();
+      confetti({ particleCount: 65, spread: 70, origin: { y: 0.65 } });
     }
   };
 
@@ -57,18 +58,29 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
 
   const handleRunRealCheckout = async () => {
     try {
+      setLiveError('');
       setLiveWidgetState('PROCESSING');
-      const keyData = await api.getRazorpayKey();
-      const order = await api.createRazorpayOrder(amount * 100);
       
+      if (!window.Razorpay) {
+        throw new Error('Razorpay SDK is not loaded in the browser. Please check your internet connection.');
+      }
+
+      const keyData = await api.getRazorpayKey();
+      if (!keyData?.key_id) {
+        throw new Error('Razorpay Key ID not configured on backend.');
+      }
+
+      const order = await api.createRazorpayOrder(amount * 100);
+      const orderId = order.order_id || order.id;
+
       const options = {
         key: keyData.key_id,
         amount: order.amount,
-        currency: order.currency,
+        currency: order.currency || 'INR',
         name: "RESILIO",
         description: "Live Razorpay Test Checkout",
         image: "https://razorpay.com/favicon.png",
-        order_id: order.id,
+        order_id: orderId,
         handler: async function (response) {
           setLiveWidgetState('VERIFYING');
           try {
@@ -77,9 +89,11 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
               setLiveWidgetState('SUCCESS');
               confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             } else {
+              setLiveError(verifyRes.error || 'Payment verification failed on Razorpay.');
               setLiveWidgetState('FAILED');
             }
           } catch (e) {
+            setLiveError(e?.response?.data?.detail || e.message || 'Payment verification failed');
             setLiveWidgetState('FAILED');
           }
         },
@@ -92,19 +106,23 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
           color: "#072654"
         },
         modal: {
-            ondismiss: function() {
-                setLiveWidgetState('IDLE');
-            }
+          ondismiss: function() {
+            setLiveWidgetState('IDLE');
+          }
         }
       };
       
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function (response){
-          setLiveWidgetState('FAILED');
+        const desc = response?.error?.description || response?.error?.reason || 'Payment declined by gateway';
+        setLiveError(desc);
+        setLiveWidgetState('FAILED');
       });
       rzp.open();
     } catch (err) {
       console.error(err);
+      const msg = err?.response?.data?.detail || err?.message || 'Could not connect to backend or Razorpay API';
+      setLiveError(msg);
       setLiveWidgetState('FAILED');
     }
   };
@@ -495,6 +513,11 @@ export default function CheckoutSimulator({ onSimulateFailure, onConfirmUIFlip, 
                 <div className="text-lg font-extrabold text-[#CB3837] font-heading">
                   Live Checkout Failed
                 </div>
+                {liveError && (
+                  <p className="text-xs text-[#E53E3E] bg-[#FFF5F5] p-2.5 rounded-lg border border-[#FEB2B2] max-w-sm mx-auto break-words font-medium">
+                    {liveError}
+                  </p>
+                )}
                 <button
                   onClick={() => setLiveWidgetState('IDLE')}
                   className="rzp-btn-secondary !text-xs !font-bold text-[#CB3837] border-[#F5C6C6] w-full"
